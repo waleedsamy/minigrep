@@ -1,47 +1,30 @@
+use minigrep::Config;
 use std::env;
-use std::fs;
+use std::error::Error;
 use std::process;
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), Box<dyn Error>> {
     let args = env::args().collect::<Vec<String>>();
-    let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("Error found: {}", err);
-        process::exit(1)
+    let config = Config::new(&args).unwrap_or_else(|e| {
+        eprintln!("Problem: {}", e);
+        process::exit(1);
     });
 
-    println!("config: {:?}", config);
-    run(config);
-    Ok(())
-}
+    println!("config query: {:}", config.query);
+    println!("config filename: {:}", config.filename);
+    println!("");
 
-fn run(config: Config) {
-    let content =
-        fs::read_to_string(&config.filename).expect("Something wrong with reading the file");
-    println!("content {}:\n{}", &config.filename, content);
-}
-
-#[derive(Debug)]
-struct Config {
-    filename: String,
-    query: String,
-}
-
-impl Config {
-    fn new(args: &Vec<String>) -> Result<Config, &'static str> {
-        if args.len() != 3 {
-            Err("usage: minigrep file regex")
-        } else {
-            Ok(Config {
-                query: args[1].to_string(),
-                filename: args[2].to_string(),
-            })
-        }
+    if let Err(e) = minigrep::run(config) {
+        eprintln!("Problem: {}", e);
+        process::exit(1);
     }
+
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Config;
+    use minigrep::Config;
     #[test]
     fn test_valid_config() -> Result<(), &'static str> {
         let args = &vec![
