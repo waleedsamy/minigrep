@@ -1,10 +1,10 @@
 [package]
-name = "minigrep"
+name = "waleedsamygd_minigrep"
 version = "0.1.0"
 authors = ["Waleed Samy <waleedsamygd@protonmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "search for string in a file"
+license = "LGPL-2.1-only AND MIT AND BSD-2-Clause"
 
 [dependencies]
 
